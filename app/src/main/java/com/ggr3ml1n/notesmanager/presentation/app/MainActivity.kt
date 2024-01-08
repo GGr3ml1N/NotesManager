@@ -1,7 +1,8 @@
-package com.ggr3ml1n.notesmanager
+package com.ggr3ml1n.notesmanager.presentation.app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.ggr3ml1n.notesmanager.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
