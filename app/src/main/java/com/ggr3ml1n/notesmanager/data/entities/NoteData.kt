@@ -7,18 +7,9 @@ import java.sql.Timestamp
 
 @Entity(tableName = "Notes")
 data class NoteData(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int,
-
-    @ColumnInfo(name = "dateStart")
-    val dateStart: Timestamp,
-
-    @ColumnInfo(name = "dateFinish")
-    val dateFinish: Timestamp,
-
-    @ColumnInfo(name = "name")
-    val name: String,
-
-    @ColumnInfo(name = "description")
-    val description: String,
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    @ColumnInfo(name = "dateStart") val dateStart: Timestamp,
+    @ColumnInfo(name = "dateFinish") val dateFinish: Timestamp,
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "description") val description: String,
 )
