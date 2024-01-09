@@ -1,4 +1,10 @@
 package com.ggr3ml1n.notesmanager.domain.usecases
 
-class UpdateNoteUseCase {
+import com.ggr3ml1n.notesmanager.domain.repository.NoteRepository
+
+class UpdateNoteUseCase(private val noteRepository: NoteRepository) {
+
+    suspend fun execute(){
+        noteRepository.updateNote()
+    }
 }
