@@ -1,4 +1,4 @@
-package com.ggr3ml1n.notesmanager.data
+package com.ggr3ml1n.notesmanager.data.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
