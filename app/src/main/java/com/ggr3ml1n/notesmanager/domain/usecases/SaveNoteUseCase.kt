@@ -1,4 +1,11 @@
 package com.ggr3ml1n.notesmanager.domain.usecases
 
-class SaveNoteUseCase {
+import com.ggr3ml1n.notesmanager.domain.repository.NoteRepository
+
+class
+SaveNoteUseCase(private val noteRepository: NoteRepository) {
+
+    suspend fun execute(){
+        noteRepository.saveNote()
+    }
 }
