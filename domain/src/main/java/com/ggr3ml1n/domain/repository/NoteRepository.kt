@@ -1,6 +1,7 @@
 package com.ggr3ml1n.domain.repository
 
 import com.ggr3ml1n.domain.entities.NoteDomain
+import kotlinx.coroutines.flow.Flow
 
 interface NoteRepository {
 
@@ -10,5 +11,5 @@ interface NoteRepository {
 
     suspend fun updateNote(note: NoteDomain)
 
-    fun getNotesByDate(dateStart: String, dateFinish: String): List<NoteDomain>
+    fun getNotesByDate(dateStart: String, dateFinish: String): Flow<List<NoteDomain>>
 }

@@ -1,7 +1,7 @@
 package com.ggr3ml1n.data.storage
 
-import androidx.lifecycle.LiveData
 import com.ggr3ml1n.data.entities.NoteData
+import kotlinx.coroutines.flow.Flow
 
 interface NoteStorage {
 
@@ -11,5 +11,5 @@ interface NoteStorage {
 
     suspend fun updateNote(note: NoteData)
 
-    fun getNotesByDate(dateStart: String, dateFinish: String): LiveData<List<NoteData>>
+    fun getNotesByDate(dateStart: String, dateFinish: String): Flow<List<NoteData>>
 }
