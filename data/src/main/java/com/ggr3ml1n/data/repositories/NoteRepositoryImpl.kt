@@ -4,6 +4,8 @@ import com.ggr3ml1n.data.entities.NoteData
 import com.ggr3ml1n.data.storage.NoteStorage
 import com.ggr3ml1n.domain.entities.NoteDomain
 import com.ggr3ml1n.domain.repository.NoteRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository {
 
@@ -19,12 +21,13 @@ class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository 
         noteStorage.saveNote(toData(note))
     }
 
-    override fun getNotesByDate(dateStart: String, dateFinish: String): List<NoteDomain> =
-        noteStorage.getNotesByDate(
-            dateStart = dateStart,
-            dateFinish = dateFinish
-        ).value
-            ?.map { toDomain(it) } ?: listOf()
+    override fun getNotesByDate(dateStart: String, dateFinish: String): Flow<List<NoteDomain>> =
+        noteStorage.getNotesByDate(dateStart = dateStart, dateFinish = dateFinish)
+            .map { list ->
+                list.map { noteData ->
+                    toDomain(noteData)
+                }
+            }
 
     private fun toDomain(note: NoteData): NoteDomain {
         return NoteDomain(

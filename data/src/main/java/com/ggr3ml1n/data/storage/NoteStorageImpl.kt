@@ -1,6 +1,5 @@
 package com.ggr3ml1n.data.storage
 
-import androidx.lifecycle.asLiveData
 import com.ggr3ml1n.data.database.MainDataBase
 import com.ggr3ml1n.data.entities.NoteData
 
@@ -24,5 +23,5 @@ class NoteStorageImpl(database: MainDataBase) : NoteStorage {
         dao.getNotesByDate(
             dateStart = dateStart,
             dateFinish = dateFinish
-        ).asLiveData()
+        )
 }
