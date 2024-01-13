@@ -1,23 +1,29 @@
 package com.ggr3ml1n.notesmanager.presentation.app.fragments
 
 import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ggr3ml1n.notesmanager.databinding.FragmentAllNotesBinding
+import com.ggr3ml1n.notesmanager.presentation.app.adapters.NoteAdapter
+import com.ggr3ml1n.notesmanager.presentation.vm.AllNotesViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Calendar
-import java.util.GregorianCalendar
 
 class AllNotesFragment : Fragment() {
 
     private var _binding: FragmentAllNotesBinding? = null
     private val binding get() = _binding!!
 
-    private val dateAndTime = Calendar.getInstance()
+    private lateinit var adapter: NoteAdapter
+
+    private val vm: AllNotesViewModel by viewModel()
+
+    private lateinit var dateAndTime: Calendar
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,51 +34,59 @@ class AllNotesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        initRcView()
+
         binding.datePickerBtn.setOnClickListener {
-            setDate()
+            datePickerDialog()
         }
+
         binding.datePickerBtn.setOnLongClickListener {
-            setTime()
+            vm.onLongClick()
             true
         }
+
+        listObserver()
+        dateObserver()
+        vm.init(dateAndTime.timeInMillis.toString())
     }
 
-    private fun setDate() {
+    private fun datePickerDialog() {
         DatePickerDialog(
             requireActivity(),
-            { _, year, month, dayOfMonth ->
-                Log.d(
-                    "datap",
-                    "checked date: ${
-                        GregorianCalendar(
-                            year,
-                            month,
-                            dayOfMonth
-                        ).timeInMillis
-                    }\n current date: ${Calendar.getInstance().timeInMillis}"
-                )
-            },
+            vm.listener(),
             dateAndTime[Calendar.YEAR],
             dateAndTime[Calendar.MONTH],
             dateAndTime[Calendar.DAY_OF_MONTH],
         ).show()
     }
 
-    private fun setTime() {
-        TimePickerDialog(requireActivity(),
-            { _, hourOfDay, minute ->
-                Log.d(
-                    "datat", "picked: ${
-                        GregorianCalendar(
-                            dateAndTime[Calendar.YEAR],
-                            dateAndTime[Calendar.MONTH],
-                            dateAndTime[Calendar.DAY_OF_MONTH],
-                            hourOfDay,
-                            minute
-                        ).timeInMillis
-                    }\n current: current date: ${Calendar.getInstance().timeInMillis}"
-                )
-            }, 0, 0, true).show()
+    private fun initRcView() {
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        val listener = NoteAdapter.ClickListener {
+
+        }
+        adapter = NoteAdapter(listener)
+        binding.recyclerView.adapter = adapter
+    }
+
+
+    private fun listObserver() {
+        vm.listOfNotes.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
+    }
+
+    private fun dateObserver() {
+        vm.dateAndTimeLiveData.observe(viewLifecycleOwner) {
+            dateAndTime = it
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     companion object {
