@@ -1,4 +1,4 @@
-package com.ggr3ml1n.notesmanager.presentation.app
+package com.ggr3ml1n.notesmanager.presentation.app.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
