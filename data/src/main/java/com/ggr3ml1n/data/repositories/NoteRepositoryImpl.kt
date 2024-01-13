@@ -6,6 +6,7 @@ import com.ggr3ml1n.domain.entities.NoteDomain
 import com.ggr3ml1n.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.sql.Timestamp
 
 class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository {
 
@@ -32,8 +33,8 @@ class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository 
     private fun toDomain(note: NoteData): NoteDomain {
         return NoteDomain(
             id = note.id,
-            dateStart = note.dateStart,
-            dateFinish = note.dateFinish,
+            dateStart = Timestamp(note.dateStart.toLong()),
+            dateFinish = Timestamp(note.dateFinish.toLong()),
             name = note.name,
             description = note.description
         )
@@ -42,8 +43,8 @@ class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository 
     private fun toData(note: NoteDomain): NoteData {
         return NoteData(
             id = note.id,
-            dateStart = note.dateStart,
-            dateFinish = note.dateFinish,
+            dateStart = note.dateStart.time.toString(),
+            dateFinish = note.dateFinish.time.toString(),
             name = note.name,
             description = note.description
         )
