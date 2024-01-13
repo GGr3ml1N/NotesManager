@@ -22,8 +22,8 @@ class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository 
         noteStorage.saveNote(toData(note))
     }
 
-    override fun getNotesByDate(dateStart: String, dateFinish: String): Flow<List<NoteDomain>> =
-        noteStorage.getNotesByDate(dateStart = dateStart, dateFinish = dateFinish)
+    override fun getNotesByDate(dateStart: String): Flow<List<NoteDomain>> =
+        noteStorage.getNotesByDate(dateStart = dateStart)
             .map { list ->
                 list.map { noteData ->
                     toDomain(noteData)

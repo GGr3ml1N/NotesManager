@@ -1,4 +1,4 @@
-package com.ggr3ml1n.notesmanager.presentation.app
+package com.ggr3ml1n.notesmanager.presentation.app.fragments
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
