@@ -3,5 +3,21 @@
     <style name="Base.Theme.NotesManager" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="android:statusBarColor">@color/background_night_theme</item>
+        <item name="colorPrimary">@color/purple</item>
+        <item name="colorPrimaryVariant">@color/purple_variant</item>
+        <item name="colorButton">@color/background_night_theme</item>
+    </style>
+
+    <attr name="colorButton" format="color"/>
+
+    <style name="DateTime" parent="Theme.AppCompat.DayNight.Dialog">
+            <item name="colorControlNormal">?attr/colorSecondary</item>
+    </style>
+
+
+    <style name="DialogCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
     </style>
 </resources>

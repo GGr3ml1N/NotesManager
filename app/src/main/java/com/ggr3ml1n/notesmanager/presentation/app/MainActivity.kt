@@ -1,12 +1,18 @@
 package com.ggr3ml1n.notesmanager.presentation.app
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.ggr3ml1n.notesmanager.R
+import androidx.appcompat.app.AppCompatActivity
+import com.ggr3ml1n.notesmanager.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        FragmentManager.setFragment(this, AllNotesFragment.newInstance())
     }
 }
