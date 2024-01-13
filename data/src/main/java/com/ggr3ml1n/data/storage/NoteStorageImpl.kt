@@ -1,11 +1,12 @@
 package com.ggr3ml1n.data.storage
 
-import com.ggr3ml1n.data.database.MainDataBase
+import com.ggr3ml1n.data.database.DAO
 import com.ggr3ml1n.data.entities.NoteData
+import kotlinx.coroutines.flow.Flow
+import java.util.Calendar
 
-class NoteStorageImpl(database: MainDataBase) : NoteStorage {
+class NoteStorageImpl(private val dao: DAO) : NoteStorage {
 
-    private val dao = database.getDAO()
 
     override suspend fun deleteNote(id: Int) {
         dao.deleteNote(id = id)
@@ -19,9 +20,18 @@ class NoteStorageImpl(database: MainDataBase) : NoteStorage {
         dao.updateNote(note = note)
     }
 
-    override fun getNotesByDate(dateStart: String, dateFinish: String) =
-        dao.getNotesByDate(
+    override fun getNotesByDate(dateStart: String): Flow<List<NoteData>> {
+        val calendar = Calendar.getInstance()
+        calendar.set(
+            calendar[Calendar.YEAR],
+            calendar[Calendar.MONTH],
+            calendar[Calendar.DAY_OF_MONTH],
+            23,
+            59,
+            59)
+        return dao.getNotesByDate(
             dateStart = dateStart,
-            dateFinish = dateFinish
+            dateFinish = calendar.time.toString()
         )
+    }
 }
