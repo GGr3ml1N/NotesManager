@@ -1,6 +1,7 @@
 package com.ggr3ml1n.notesmanager.presentation.vm
 
 import android.app.DatePickerDialog
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,43 +16,37 @@ class AllNotesViewModel(
     private val getNotesByDateUseCase: GetNotesByDateUseCase
 ) : ViewModel() {
 
-    private val _dateAndTimeLiveData = MutableLiveData(Calendar.getInstance())
-    val dateAndTimeLiveData: LiveData<Calendar> = _dateAndTimeLiveData
-
     private val _listOfNotes: MutableLiveData<List<NoteDomain>> = MutableLiveData()
     val listOfNotes: LiveData<List<NoteDomain>> = _listOfNotes
 
-    fun init(dayStart: String) {
+    private var dateAndTime: Calendar = Calendar.getInstance()
+
+    fun init() {
         viewModelScope.launch {
-            _listOfNotes.value = getNotesByDateUseCase.execute(dayStart).asLiveData().value
+            _listOfNotes.value = getNotesByDateUseCase
+                .execute(dateAndTime.timeInMillis.toString())
+                .asLiveData().value
         }
     }
 
-     fun listener(): DatePickerDialog.OnDateSetListener {
+    fun datePickerDialog(context: Context) {
+        DatePickerDialog(
+            context,
+            listener(),
+            dateAndTime[Calendar.YEAR],
+            dateAndTime[Calendar.MONTH],
+            dateAndTime[Calendar.DAY_OF_MONTH],
+        ).show()
+    }
+
+    private fun listener(): DatePickerDialog.OnDateSetListener {
         return DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-            _dateAndTimeLiveData.value?.set(year, month, dayOfMonth)
-            init(_dateAndTimeLiveData.value?.timeInMillis.toString())
+            dateAndTime.set(year, month, dayOfMonth)
+            init()
         }
     }
 
-    fun onLongClick() {
-        _dateAndTimeLiveData.value = Calendar.getInstance()
+    fun onLongClick(){
+        dateAndTime = Calendar.getInstance()
     }
-
-   /* class AllNotesProvider(context: Context) : ViewModelProvider.Factory {
-
-        private val getNotesByDateUseCase: GetNotesByDateUseCase by lazy {
-            GetNotesByDateUseCase(
-                NoteRepositoryImpl(
-                    NoteStorageImpl(
-                        (context.applicationContext as MainApp).dataBase.getDAO()
-                    )
-                )
-            )
-        }
-
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return AllNotesViewModel(getNotesByDateUseCase) as T
-        }
-    }*/
 }

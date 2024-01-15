@@ -1,23 +1,29 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.NotesManager" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="android:statusBarColor">@color/background_night_theme</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="colorPrimary">@color/purple</item>
         <item name="colorPrimaryVariant">@color/purple_variant</item>
         <item name="colorButton">@color/background_night_theme</item>
+        <item name="floatingActionButtonStyle">@style/FabStyle</item>
     </style>
 
-    <attr name="colorButton" format="color"/>
+    <attr name="colorButton" format="color" />
 
     <style name="DateTime" parent="Theme.AppCompat.DayNight.Dialog">
-            <item name="colorControlNormal">?attr/colorSecondary</item>
+        <item name="colorControlNormal">?attr/colorSecondary</item>
     </style>
 
+    <style name="FabStyle" parent="Widget.Design.FloatingActionButton">
+        <item name="shapeAppearanceOverlay">@style/Fab</item>
+    </style>
 
-    <style name="DialogCorners">
+    <style name="Fab" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">50%</item>
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">16dp</item>
+        <item name="android:backgroundTint">@color/purple</item>
     </style>
 </resources>
