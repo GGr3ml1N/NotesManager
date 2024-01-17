@@ -8,10 +8,12 @@
         <item name="colorPrimary">@color/purple</item>
         <item name="colorPrimaryVariant">@color/purple_variant</item>
         <item name="colorButton">@color/background_night_theme</item>
+        <item name="inverseColorButton">@color/background_light_theme</item>
         <item name="floatingActionButtonStyle">@style/FabStyle</item>
     </style>
 
     <attr name="colorButton" format="color" />
+    <attr name="inverseColorButton" format="color"/>
 
     <style name="DateTime" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="colorControlNormal">?attr/colorSecondary</item>
