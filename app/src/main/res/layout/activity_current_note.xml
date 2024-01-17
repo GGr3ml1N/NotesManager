@@ -25,20 +25,22 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorOnPrimary" />
+                android:background="?attr/colorButton"
+                app:menu="@menu/current_note_menu" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
 
 
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".presentation.app.activities.CurrentNoteActivity">
 
 
             <EditText
@@ -91,7 +93,7 @@
                 tools:text="12:00" />
 
             <EditText
-                android:id="@+id/editTextText5"
+                android:id="@+id/edDescription"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
