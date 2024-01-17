@@ -6,6 +6,6 @@ import com.ggr3ml1n.domain.repository.NoteRepository
 class DeleteNoteUseCase(private val noteRepository: NoteRepository) {
 
     suspend fun execute(note: NoteDomain) {
-        noteRepository.deleteNote(id = note.id)
+        noteRepository.deleteNote(id = note.id!!)
     }
 }
