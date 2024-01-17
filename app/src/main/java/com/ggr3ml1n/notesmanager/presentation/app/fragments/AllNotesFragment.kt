@@ -1,13 +1,12 @@
 package com.ggr3ml1n.notesmanager.presentation.app.fragments
 
-import android.app.Activity
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ggr3ml1n.notesmanager.databinding.FragmentAllNotesBinding
@@ -26,16 +25,6 @@ class AllNotesFragment : Fragment() {
 
     private val vm: AllNotesViewModel by viewModel()
 
-    private val launch: ActivityResultLauncher<Intent> =
-        registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                TODO()
-            }
-        }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,9 +33,12 @@ class AllNotesFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SimpleDateFormat")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initRcView()
+        listObserver()
 
         binding.datePickerBtn.setOnClickListener {
             vm.datePickerDialog(requireActivity())
@@ -54,15 +46,20 @@ class AllNotesFragment : Fragment() {
 
         binding.datePickerBtn.setOnLongClickListener {
             vm.onLongClick()
+            Toast.makeText(activity, "Текущая дата", Toast.LENGTH_SHORT).show()
             true
         }
 
         binding.newNoteBtn.setOnClickListener {
-            launch.launch(Intent(activity, CurrentNoteActivity::class.java))
+            startActivity(Intent(requireContext(), CurrentNoteActivity::class.java)
+                .apply {
+                    putExtra(
+                        DATA,
+                        vm.dateAndTime
+                    )
+                }
+            )
         }
-
-        listObserver()
-        vm.init()
     }
 
 
@@ -88,6 +85,9 @@ class AllNotesFragment : Fragment() {
     }
 
     companion object {
+
+        const val DATA = "data"
+
         @JvmStatic
         fun newInstance() = AllNotesFragment()
     }
