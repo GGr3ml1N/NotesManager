@@ -1,5 +1,6 @@
 package com.ggr3ml1n.notesmanager.presentation.app.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,7 @@ import com.ggr3ml1n.notesmanager.R
 import com.ggr3ml1n.notesmanager.databinding.NoteItemBinding
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
+import java.util.TimeZone
 
 class NoteAdapter(private val listener: ClickListener): ListAdapter<NoteDomain, NoteAdapter.ItemHolder>(ItemComparator()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder =
@@ -38,9 +39,12 @@ class NoteAdapter(private val listener: ClickListener): ListAdapter<NoteDomain, 
             }
         }
 
-        private fun timeToString(millies: Long) : String {
-            val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-            return formatter.format(Date(millies))
+        @SuppressLint("SimpleDateFormat")
+        private fun timeToString(millis: Long) : String {
+            val formatter = SimpleDateFormat("HH:mm").apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+            return formatter.format(Date(millis))
         }
         companion object {
             fun create(parent: ViewGroup): ItemHolder {
