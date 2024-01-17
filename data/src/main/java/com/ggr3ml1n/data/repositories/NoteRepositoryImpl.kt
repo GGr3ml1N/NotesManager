@@ -33,8 +33,8 @@ class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository 
     private fun toDomain(note: NoteData): NoteDomain {
         return NoteDomain(
             id = note.id,
-            dateStart = Timestamp(note.dateStart.toLong()),
-            dateFinish = Timestamp(note.dateFinish.toLong()),
+            dateStart = Timestamp(note.dateStart),
+            dateFinish = Timestamp(note.dateFinish),
             name = note.name,
             description = note.description
         )
@@ -43,8 +43,8 @@ class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository 
     private fun toData(note: NoteDomain): NoteData {
         return NoteData(
             id = note.id,
-            dateStart = note.dateStart.time.toString(),
-            dateFinish = note.dateFinish.time.toString(),
+            dateStart = note.dateStart.time,
+            dateFinish = note.dateFinish.time,
             name = note.name,
             description = note.description
         )
