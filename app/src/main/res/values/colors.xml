@@ -7,4 +7,5 @@
     <color name="text_black_light_theme">#FF595459</color>
     <color name="background_light_theme">#FFFFFBFF</color>
     <color name="background_night_theme">#FF1C1B1F</color>
+    <color name="red">#FFDD4242</color>
 </resources>
