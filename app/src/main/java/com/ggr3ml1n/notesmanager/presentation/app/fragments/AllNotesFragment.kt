@@ -55,7 +55,7 @@ class AllNotesFragment : Fragment() {
                 .apply {
                     putExtra(
                         DATA,
-                        vm.dateAndTime
+                        vm.date
                     )
                 }
             )
