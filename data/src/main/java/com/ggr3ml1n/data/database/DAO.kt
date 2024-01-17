@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DAO {
 
-    @Query("SELECT * FROM Notes WHERE dateStart >= :dateStart AND dateStart < :dateFinish")
+    @Query("SELECT * FROM notes WHERE dateStart >= :dateStart AND dateFinish < :dateFinish")
     fun getNotesByDate(dateStart: String, dateFinish: String): Flow<List<NoteData>>
 
     @Query("DELETE FROM Notes WHERE id IS :id")
