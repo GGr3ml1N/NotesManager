@@ -7,9 +7,4 @@
         app:showAsAction="ifRoom"
         android:title="@string/save"/>
 
-    <item android:id="@+id/delete"
-        android:icon="@drawable/ic_delete"
-        app:showAsAction="ifRoom"
-        android:title="@string/delete"
-        />
 </menu>
