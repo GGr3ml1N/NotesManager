@@ -1,6 +1,7 @@
 package com.ggr3ml1n.notesmanager.presentation.app.activities
 
 import android.annotation.SuppressLint
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -9,10 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ggr3ml1n.notesmanager.R
 import com.ggr3ml1n.notesmanager.databinding.ActivityCurrentNoteBinding
 import com.ggr3ml1n.notesmanager.presentation.app.fragments.AllNotesFragment
+import com.ggr3ml1n.notesmanager.presentation.app.utils.getSerializable
 import com.ggr3ml1n.notesmanager.presentation.vm.CurrentNoteViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
+import java.time.LocalTime
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -36,15 +39,44 @@ class CurrentNoteActivity : AppCompatActivity() {
         onFinishDateClick()
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun onStartDateClick() = with(binding) {
         tvTimeStart.setOnClickListener {
-            vm.timePicker(this@CurrentNoteActivity, tvTimeStart)
+            TimePickerDialog(
+                this@CurrentNoteActivity, { _, hourOfDay, minute ->
+
+                    tvTimeStart.text = LocalTime.of(hourOfDay, minute).toString()
+
+                    val compare = LocalTime.parse(tvTimeStart.text).compareTo(LocalTime.parse(tvTimeEnd.text))
+                    if (compare == 1 || compare == 0 )
+                        tvTimeEnd.text = LocalTime.parse(tvTimeStart.text).plusMinutes(1L).toString()
+                },
+                0, 0, true
+            ).show()
         }
     }
 
     private fun onFinishDateClick() = with(binding) {
         tvTimeEnd.setOnClickListener {
-            vm.timePicker(this@CurrentNoteActivity, tvTimeEnd)
+            TimePickerDialog(
+                this@CurrentNoteActivity,
+                { _, hourOfDay, minute ->
+
+                    val timeEnd = LocalTime.of(hourOfDay, minute)
+                    val compare = LocalTime.parse(tvTimeStart.text).compareTo(timeEnd)
+
+                    if (compare == -1) {
+                        tvTimeEnd.text = timeEnd.toString()
+                    }
+                    else {
+                        tvTimeEnd.text =
+                            LocalTime.parse(tvTimeStart.text).plusMinutes(1L).toString()
+                    }
+                },
+                0,
+                0,
+                true
+            ).show()
         }
     }
 
@@ -58,43 +90,38 @@ class CurrentNoteActivity : AppCompatActivity() {
             finish()
         }
         toolbar.title =
-            SimpleDateFormat("dd M", Locale.getDefault()).format(Date(getData(intent).timeInMillis))
+            SimpleDateFormat("dd M", Locale.getDefault()).format(Date(getData(intent)!!.timeInMillis))
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.save -> {
                     saveNote()
                 }
-
-                R.id.delete -> {}
             }
             true
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun saveNote() = with(binding) {
         val timeFormat = SimpleDateFormat("HH:mm").apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
         vm.save(
             dateStart = Timestamp(
-                timeFormat.parse(tvTimeStart.text.toString())!!.time + getData(intent).timeInMillis
+                timeFormat.parse(tvTimeStart.text.toString())!!.time + getData(intent)!!.timeInMillis
             ),
             dateFinish = Timestamp(
-                    timeFormat.parse(tvTimeEnd.text.toString())!!.time + getData(intent).timeInMillis
+                timeFormat.parse(tvTimeEnd.text.toString())!!.time + getData(intent)!!.timeInMillis
             ),
             name = edName.text.toString(),
             description = edDescription.text.toString()
         )
         finish()
     }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun getData(intent: Intent): Calendar {
-        return intent.getSerializableExtra(
+    
+    private fun getData(intent: Intent): Calendar? {
+        return intent.getSerializable(
             AllNotesFragment.DATA,
             Calendar::class.java
-        ) ?: throw Exception("Null \"CheckedData\" instance")
+        )
     }
 }
