@@ -38,11 +38,15 @@ class AllNotesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initRcView()
-        listObserver()
+        //Some kind of collective farm, to be honest
+        //start of kolhoz
+        vm.listObserver(adapter, viewLifecycleOwner)
 
         binding.datePickerBtn.setOnClickListener {
-            vm.datePickerDialog(requireActivity())
+            vm.datePickerDialog(requireActivity(), adapter, viewLifecycleOwner)
+            vm.listObserver(adapter, viewLifecycleOwner)
         }
+        //end of kolhoz
 
         binding.datePickerBtn.setOnLongClickListener {
             vm.onLongClick()
@@ -55,7 +59,7 @@ class AllNotesFragment : Fragment() {
                 .apply {
                     putExtra(
                         DATA,
-                        vm.date
+                        vm.date.value
                     )
                 }
             )
@@ -72,12 +76,6 @@ class AllNotesFragment : Fragment() {
         binding.recyclerView.adapter = adapter
     }
 
-
-    private fun listObserver() {
-        vm.listOfNotes.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
