@@ -2,45 +2,63 @@ package com.ggr3ml1n.notesmanager.presentation.vm
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.util.Log
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import com.ggr3ml1n.domain.entities.NoteDomain
 import com.ggr3ml1n.domain.usecases.GetNotesByDateUseCase
+import com.ggr3ml1n.notesmanager.presentation.app.adapters.NoteAdapter
 import java.util.Calendar
+import java.util.TimeZone
 
 class AllNotesViewModel(
-    getNotesByDateUseCase: GetNotesByDateUseCase
+    private val getNotesByDateUseCase: GetNotesByDateUseCase
 ) : ViewModel() {
 
-    var date: Calendar = Calendar.getInstance().apply {
+    private val _date = MutableLiveData(Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
         set(Calendar.HOUR_OF_DAY, 0)
         set(Calendar.MINUTE, 0)
         set(Calendar.SECOND, 0)
         set(Calendar.MILLISECOND, 0)
-    }
-        private set
+    })
+    val date: LiveData<Calendar> = _date
+    private fun getListByDate(time: Long) =
+        getNotesByDateUseCase.execute(time).asLiveData()
 
-    val listOfNotes: LiveData<List<NoteDomain>> = getNotesByDateUseCase.execute(date.timeInMillis.toString()).asLiveData()
-
-    fun datePickerDialog(context: Context) {
+    fun datePickerDialog(context: Context, adapter: NoteAdapter, lifecycleOwner: LifecycleOwner) {
         DatePickerDialog(
             context,
-            listenerDate(),
-            date[Calendar.YEAR],
-            date[Calendar.MONTH],
-            date[Calendar.DAY_OF_MONTH],
+            listenerDate(adapter, lifecycleOwner),
+            _date.value!![Calendar.YEAR],
+            _date.value!![Calendar.MONTH],
+            _date.value!![Calendar.DAY_OF_MONTH],
         ).show()
     }
 
-    private fun listenerDate(): DatePickerDialog.OnDateSetListener {
+    private fun listenerDate(adapter: NoteAdapter, lifecycleOwner: LifecycleOwner): DatePickerDialog.OnDateSetListener {
         return DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-            date.set(year, month, dayOfMonth)
+            _date.value!!.apply {
+                set(year, month, dayOfMonth)
+            }
+            listObserver(adapter, lifecycleOwner)
+            Log.d("DataObserver", "${_date.value?.timeInMillis}")
+        }
+    }
+
+    fun listObserver(adapter: NoteAdapter, lifecycleOwner: LifecycleOwner) {
+        date.observe(lifecycleOwner) { date ->
+            Log.d("Data", "${date.timeInMillis}")
+            getListByDate(date.timeInMillis).observe(lifecycleOwner) { list ->
+                adapter.submitList(list)
+                Log.d("List", "$list")
+            }
         }
     }
 
     fun onLongClick() {
-        date = Calendar.getInstance().apply {
+        _date.value = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
