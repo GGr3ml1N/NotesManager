@@ -34,8 +34,10 @@ class NoteAdapter(private val listener: ClickListener): ListAdapter<NoteDomain, 
                 .append(" - ")
                 .append(timeToString(note.dateFinish.time))
 
+            if(nameTv.text.isEmpty()) nameTv.visibility = View.GONE else nameTv.visibility = View.VISIBLE
+
             itemView.setOnClickListener {
-                listener.onClick()
+                listener.onClick(note)
             }
         }
 
@@ -70,6 +72,6 @@ class NoteAdapter(private val listener: ClickListener): ListAdapter<NoteDomain, 
     }
 
     fun interface ClickListener {
-        fun onClick()
+        fun onClick(note: NoteDomain)
     }
 }
