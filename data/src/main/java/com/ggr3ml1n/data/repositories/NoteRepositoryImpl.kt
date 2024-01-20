@@ -19,7 +19,7 @@ class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository 
     }
 
     override suspend fun updateNote(note: NoteDomain) {
-        noteStorage.saveNote(toData(note))
+        noteStorage.updateNote(toData(note))
     }
 
         override fun getNotesByDate(dateStart: Long): Flow<List<NoteDomain>> =
