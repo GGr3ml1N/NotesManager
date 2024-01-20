@@ -12,22 +12,19 @@ import com.ggr3ml1n.notesmanager.presentation.app.utils.getSerializable
 import com.ggr3ml1n.notesmanager.presentation.vm.CurrentNoteViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.sql.Timestamp
-import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
+import java.time.ZoneOffset
 
 class CurrentNoteActivity : AppCompatActivity() {
 
     private var _binding: ActivityCurrentNoteBinding? = null
-    private val binding get() = _binding!!
+    private val binding: ActivityCurrentNoteBinding
+        get() = _binding!!
 
     private val vm: CurrentNoteViewModel by viewModel()
-
-    private var note: NoteDomain? = null
 
     @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,72 +87,97 @@ class CurrentNoteActivity : AppCompatActivity() {
             wants to exit without saving*/
             finish()
         }
-        toolbar.title =
-            SimpleDateFormat(
-                "dd M",
-                Locale.getDefault()
-            ).format(Date(getData()!!.timeInMillis))
+
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.save -> {
-                    saveNote()
+                    onSaveButtonClick()
                 }
             }
             true
         }
     }
 
-    private fun fillNote() = with(binding){
+    private fun fillNote() = with(binding) {
         if (intent.hasExtra(AllNotesFragment.NOTE)) {
-            note = intent.getSerializable(AllNotesFragment.NOTE, NoteDomain::class.java)
-            edName.setText(note?.name)
-            tvTimeStart.text = note?.dateStart?.toInstant()?.atZone(ZoneId.of("UTC"))?.toLocalDateTime()?.toLocalTime().toString()
-            tvTimeEnd.text = note?.dateFinish?.toInstant()?.atZone(ZoneId.of("UTC"))?.toLocalDateTime()?.toLocalTime().toString()
-            edDescription.setText(note?.description)
+            vm.onGettingNote(
+                getNote() ?: NoteDomain(null, Timestamp(0L), Timestamp(1L), "", "")
+            )
+
+            edName.setText(vm.note.value?.name)
+
+            tvTimeStart.text =
+                vm.note.value?.dateStart?.toInstant()?.atZone(ZoneId.of("UTC"))?.toLocalDateTime()
+                    ?.toLocalTime().toString()
+
+            tvTimeEnd.text =
+                vm.note.value?.dateFinish?.toInstant()?.atZone(ZoneId.of("UTC"))?.toLocalDateTime()
+                    ?.toLocalTime().toString()
+
+            edDescription.setText(vm.note.value?.description)
         }
     }
 
-    private fun saveNote() = with(binding) {
-        val timeFormat = SimpleDateFormat("HH:mm").apply {
-            timeZone = TimeZone.getTimeZone("UTC")
-        }
-
+    private fun onSaveButtonClick() = with(binding) {
         if (intent.hasExtra(AllNotesFragment.NOTE)) {
-            val note = intent.getSerializable(AllNotesFragment.NOTE, NoteDomain::class.java)?.copy(
-                id = note?.id,
-                dateStart = Timestamp(
-                    timeFormat.parse(tvTimeStart.text.toString())!!.time + getData()!!.timeInMillis
-                ),
-                dateFinish = Timestamp(
-                    timeFormat.parse(tvTimeEnd.text.toString())!!.time + getData()!!.timeInMillis
-                ),
-                name = edName.text.toString().trim(),
-                description = edDescription.text.toString().trim()
+            vm.onDateStartChanged(
+                Timestamp(
+                    LocalDateTime.of(getDate(), LocalTime.parse(tvTimeStart.text)).toInstant(
+                        ZoneOffset.UTC
+                    ).toEpochMilli()
+                )
             )
-            if (note != null) {
-                vm.updateNote(note)
-            }
+
+            vm.onDateFinishChanged(
+                Timestamp(
+                    LocalDateTime.of(getDate(), LocalTime.parse(tvTimeEnd.text)).toInstant(
+                        ZoneOffset.UTC
+                    ).toEpochMilli()
+                )
+            )
+
+            vm.onNameChanged(edName.text.toString().trim())
+
+            vm.onDescriptionChanged(edDescription.text.toString().trim())
+
+            vm.onSaveButtonClick(vm.note.value!!, Action.UPDATE)
         } else {
-            note = NoteDomain(
+            val note = NoteDomain(
                 id = null,
                 dateStart = Timestamp(
-                    timeFormat.parse(tvTimeStart.text.toString())!!.time + getData()!!.timeInMillis
+                    LocalDateTime.of(getDate(), LocalTime.parse(tvTimeStart.text)).toInstant(
+                        ZoneOffset.UTC
+                    ).toEpochMilli()
                 ),
                 dateFinish = Timestamp(
-                    timeFormat.parse(tvTimeEnd.text.toString())!!.time + getData()!!.timeInMillis
+                    LocalDateTime.of(getDate(), LocalTime.parse(tvTimeEnd.text)).toInstant(
+                        ZoneOffset.UTC
+                    ).toEpochMilli()
                 ),
                 name = edName.text.toString().trim(),
                 description = edDescription.text.toString().trim()
             )
-            vm.saveNote(note!!)
+
+            vm.onSaveButtonClick(note, Action.SAVE)
         }
         finish()
     }
 
-    private fun getData(): Calendar? {
+    private fun getDate(): LocalDate? {
         return intent.getSerializable(
             AllNotesFragment.DATA,
-            Calendar::class.java
+            LocalDate::class.java
         )
+    }
+
+    private fun getNote(): NoteDomain? {
+        return intent.getSerializable(
+            AllNotesFragment.NOTE,
+            NoteDomain::class.java
+        )
+    }
+
+    enum class Action {
+        SAVE, UPDATE
     }
 }
