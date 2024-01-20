@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
 
-class NoteAdapter(private val listener: ClickListener): ListAdapter<NoteDomain, NoteAdapter.ItemHolder>(ItemComparator()) {
+class NoteAdapter(private val listener: Touchable): ListAdapter<NoteDomain, NoteAdapter.ItemHolder>(ItemComparator()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder =
         ItemHolder.create(parent)
 
@@ -27,17 +27,19 @@ class NoteAdapter(private val listener: ClickListener): ListAdapter<NoteDomain, 
 
         private val binding: NoteItemBinding = NoteItemBinding.bind(view)
 
-        fun setData(note: NoteDomain, listener: ClickListener) = with(binding) {
+        fun setData(note: NoteDomain, listener: Touchable) = with(binding) {
 
-            nameTv.text = note.name
-            timeTv.text = StringBuilder(timeToString(note.dateStart.time))
+            tvName.text = note.name
+            tvTime.text = StringBuilder(timeToString(note.dateStart.time))
                 .append(" - ")
                 .append(timeToString(note.dateFinish.time))
 
-            if(nameTv.text.isEmpty()) nameTv.visibility = View.GONE else nameTv.visibility = View.VISIBLE
-
-            itemView.setOnClickListener {
+            linearLayout.setOnClickListener {
                 listener.onClick(note)
+            }
+
+            imDelete.setOnClickListener{
+                listener.onDelete(note)
             }
         }
 
@@ -71,7 +73,9 @@ class NoteAdapter(private val listener: ClickListener): ListAdapter<NoteDomain, 
 
     }
 
-    fun interface ClickListener {
+    interface Touchable {
         fun onClick(note: NoteDomain)
+
+        fun onDelete(note: NoteDomain)
     }
 }

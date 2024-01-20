@@ -8,13 +8,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.ggr3ml1n.domain.entities.NoteDomain
+import com.ggr3ml1n.domain.usecases.DeleteNoteUseCase
 import com.ggr3ml1n.domain.usecases.GetNotesByDateUseCase
 import com.ggr3ml1n.notesmanager.presentation.app.adapters.NoteAdapter
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.TimeZone
 
 class AllNotesViewModel(
-    private val getNotesByDateUseCase: GetNotesByDateUseCase
+    private val getNotesByDateUseCase: GetNotesByDateUseCase,
+    private val deleteNoteUseCase: DeleteNoteUseCase,
 ) : ViewModel() {
 
     private val _date = MutableLiveData(Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
@@ -23,6 +28,10 @@ class AllNotesViewModel(
         set(Calendar.SECOND, 0)
         set(Calendar.MILLISECOND, 0)
     })
+
+    //I want to redo getting the current date
+    //private val __date = MutableLiveData(Instant.now().atZone(ZoneId.of("UTC")).toLocalDate())
+
     val date: LiveData<Calendar> = _date
     private fun getListByDate(time: Long) =
         getNotesByDateUseCase.execute(time).asLiveData()
@@ -35,6 +44,10 @@ class AllNotesViewModel(
             _date.value!![Calendar.MONTH],
             _date.value!![Calendar.DAY_OF_MONTH],
         ).show()
+    }
+
+    fun delete(noteDomain: NoteDomain) = viewModelScope.launch {
+        deleteNoteUseCase.execute(noteDomain)
     }
 
     private fun listenerDate(adapter: NoteAdapter, lifecycleOwner: LifecycleOwner): DatePickerDialog.OnDateSetListener {
