@@ -23,7 +23,7 @@ class AllNotesViewModel(
 
     private val _date = MutableLiveData(
         LocalDateTime.of(
-            Instant.now().atZone(ZoneId.of("UTC")).toLocalDate(),
+            Instant.now().atZone(ZoneId.of("UTC+4")).toLocalDate(),
             LocalTime.of(0, 0, 0, 0)
         )
     )
@@ -40,7 +40,7 @@ class AllNotesViewModel(
 
     fun onCalendarButtonLongClick() {
         _date.value = LocalDateTime.of(
-            Instant.now().atZone(ZoneId.of("UTC")).toLocalDate(),
+            Instant.now().atZone(ZoneId.of("UTC+4")).toLocalDate(),
             LocalTime.of(0, 0, 0, 0)
         )
         Log.d("DateNow", _date.value.toString())
