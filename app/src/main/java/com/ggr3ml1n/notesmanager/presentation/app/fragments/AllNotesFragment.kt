@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ggr3ml1n.domain.entities.NoteDomain
 import com.ggr3ml1n.notesmanager.databinding.FragmentAllNotesBinding
 import com.ggr3ml1n.notesmanager.presentation.app.activities.CurrentNoteActivity
 import com.ggr3ml1n.notesmanager.presentation.app.adapters.NoteAdapter
@@ -69,8 +70,19 @@ class AllNotesFragment : Fragment() {
 
     private fun initRcView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(activity)
-        val listener = NoteAdapter.ClickListener {
+        val listener = object: NoteAdapter.Touchable {
+            override fun onClick(note: NoteDomain) {
+                startActivity(Intent(requireContext(), CurrentNoteActivity::class.java)
+                    .apply {
+                        putExtra(NOTE, note)
+                        putExtra(DATA, vm.date.value)
+                    }
+                )
+            }
 
+            override fun onDelete(note: NoteDomain) {
+                vm.delete(note)
+            }
         }
         adapter = NoteAdapter(listener)
         binding.recyclerView.adapter = adapter
@@ -85,6 +97,7 @@ class AllNotesFragment : Fragment() {
     companion object {
 
         const val DATA = "data"
+        const val NOTE = "note"
 
         @JvmStatic
         fun newInstance() = AllNotesFragment()
