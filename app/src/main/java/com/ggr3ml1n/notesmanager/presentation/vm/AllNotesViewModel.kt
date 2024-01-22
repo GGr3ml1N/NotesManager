@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.ggr3ml1n.domain.entities.NoteDomain
 import com.ggr3ml1n.domain.usecases.DeleteNoteUseCase
 import com.ggr3ml1n.domain.usecases.GetNotesByDateUseCase
+import com.ggr3ml1n.domain.usecases.GetNotesByNameUseCase
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -19,11 +20,12 @@ import java.time.ZoneId
 class AllNotesViewModel(
     private val getNotesByDateUseCase: GetNotesByDateUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase,
+    private val getNotesByNameUseCase: GetNotesByNameUseCase,
 ) : ViewModel() {
 
     private val _date = MutableLiveData(
         LocalDateTime.of(
-            Instant.now().atZone(ZoneId.of("UTC+4")).toLocalDate(),
+            Instant.now().atZone(ZoneId.systemDefault()).toLocalDate(),
             LocalTime.of(0, 0, 0, 0)
         )
     )
@@ -31,7 +33,10 @@ class AllNotesViewModel(
     val date: LiveData<LocalDateTime> = _date
 
     fun onDateChanged(time: Long) =
-        getNotesByDateUseCase.execute(time*1000).asLiveData()
+        getNotesByDateUseCase.execute(time).asLiveData()
+
+    fun onSearchFocused(name:String) =
+        getNotesByNameUseCase.execute(name).asLiveData()
 
 
     fun onDeleteButtonClick(noteDomain: NoteDomain) = viewModelScope.launch {
@@ -40,7 +45,7 @@ class AllNotesViewModel(
 
     fun onCalendarButtonLongClick() {
         _date.value = LocalDateTime.of(
-            Instant.now().atZone(ZoneId.of("UTC+4")).toLocalDate(),
+            Instant.now().atZone(ZoneId.systemDefault()).toLocalDate(),
             LocalTime.of(0, 0, 0, 0)
         )
         Log.d("DateNow", _date.value.toString())
