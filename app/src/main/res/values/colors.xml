@@ -8,4 +8,5 @@
     <color name="background_light_theme">#FFFFFBFF</color>
     <color name="background_night_theme">#FF1C1B1F</color>
     <color name="red">#FFDD4242</color>
+    <color name="hint">#FFA9A8AA</color>
 </resources>
