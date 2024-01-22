@@ -12,4 +12,6 @@ interface NoteStorage {
     suspend fun updateNote(note: NoteData)
 
     fun getNotesByDate(dateStart: Long): Flow<List<NoteData>>
+
+    fun getNoteByName(name: String): Flow<List<NoteData>>
 }
