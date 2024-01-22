@@ -1,6 +1,7 @@
 package com.ggr3ml1n.notesmanager.presentation.app.activities
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 class CurrentNoteActivity : AppCompatActivity() {
 
@@ -36,7 +38,38 @@ class CurrentNoteActivity : AppCompatActivity() {
         menuButtonListener()
         onStartDateClick()
         onFinishDateClick()
+        onTvDateClick()
     }
+
+    private fun onTvDateClick() = with(binding) {
+        onGettingNote()
+        dateObserver()
+        tvDate.setOnClickListener {
+            DatePickerDialog(
+                this@CurrentNoteActivity,
+                listener(),
+                vm.date.value!!.year,
+                vm.date.value!!.monthValue - 1,
+                vm.date.value!!.dayOfMonth
+            ).show()
+        }
+    }
+
+    private fun onGettingNote() {
+        getDate()?.let { vm.onGettingDate(it) }
+    }
+
+    private fun dateObserver() = with(binding) {
+        vm.date.observe(this@CurrentNoteActivity) {
+            tvDate.text = DateTimeFormatter.ofPattern("dd MMMM yyyy").format(it)
+        }
+    }
+
+    private fun listener() =
+        DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            vm.onTvDateClick(year, month, dayOfMonth)
+        }
+
 
     private fun onStartDateClick() = with(binding) {
         tvTimeStart.setOnClickListener {
@@ -122,7 +155,7 @@ class CurrentNoteActivity : AppCompatActivity() {
         if (intent.hasExtra(AllNotesFragment.NOTE)) {
             vm.onDateStartChanged(
                 Timestamp(
-                    LocalDateTime.of(getDate(), LocalTime.parse(tvTimeStart.text)).toInstant(
+                    LocalDateTime.of(vm.date.value, LocalTime.parse(tvTimeStart.text)).toInstant(
                         ZoneOffset.UTC
                     ).toEpochMilli()
                 )
@@ -130,7 +163,7 @@ class CurrentNoteActivity : AppCompatActivity() {
 
             vm.onDateFinishChanged(
                 Timestamp(
-                    LocalDateTime.of(getDate(), LocalTime.parse(tvTimeEnd.text)).toInstant(
+                    LocalDateTime.of(vm.date.value, LocalTime.parse(tvTimeEnd.text)).toInstant(
                         ZoneOffset.UTC
                     ).toEpochMilli()
                 )
@@ -145,12 +178,12 @@ class CurrentNoteActivity : AppCompatActivity() {
             val note = NoteDomain(
                 id = null,
                 dateStart = Timestamp(
-                    LocalDateTime.of(getDate(), LocalTime.parse(tvTimeStart.text)).toInstant(
+                    LocalDateTime.of(vm.date.value, LocalTime.parse(tvTimeStart.text)).toInstant(
                         ZoneOffset.UTC
                     ).toEpochMilli()
                 ),
                 dateFinish = Timestamp(
-                    LocalDateTime.of(getDate(), LocalTime.parse(tvTimeEnd.text)).toInstant(
+                    LocalDateTime.of(vm.date.value, LocalTime.parse(tvTimeEnd.text)).toInstant(
                         ZoneOffset.UTC
                     ).toEpochMilli()
                 ),

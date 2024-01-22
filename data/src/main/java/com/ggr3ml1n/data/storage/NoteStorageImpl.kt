@@ -25,4 +25,8 @@ class NoteStorageImpl(private val dao: DAO) : NoteStorage {
             dateFinish = dateStart + 86400000L
         )
     }
+
+    override fun getNoteByName(name: String): Flow<List<NoteData>> {
+        return dao.getNoteByName(name)
+    }
 }

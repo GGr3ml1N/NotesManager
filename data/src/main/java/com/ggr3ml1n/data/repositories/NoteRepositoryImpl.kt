@@ -22,23 +22,33 @@ class NoteRepositoryImpl(private val noteStorage: NoteStorage) : NoteRepository 
         noteStorage.updateNote(toData(note))
     }
 
-        override fun getNotesByDate(dateStart: Long): Flow<List<NoteDomain>> =
-            noteStorage.getNotesByDate(dateStart = dateStart)
-                .map { list ->
-                    list.map { noteData ->
-                        toDomain(noteData)
-                    }
+    override fun getNotesByDate(dateStart: Long): Flow<List<NoteDomain>> {
+        return noteStorage.getNotesByDate(dateStart = dateStart)
+            .map { list ->
+                list.map { noteData ->
+                    toDomain(noteData)
                 }
+            }
+    }
 
-        private fun toDomain(note: NoteData): NoteDomain {
-            return NoteDomain(
-                id = note.id,
-                dateStart = Timestamp(note.dateStart),
-                dateFinish = Timestamp(note.dateFinish),
-                name = note.name,
-                description = note.description
-            )
-        }
+    override fun getNoteByName(name: String): Flow<List<NoteDomain>> {
+        return noteStorage.getNoteByName(name)
+            .map { list ->
+                list.map { noteData ->
+                    toDomain(noteData)
+                }
+            }
+    }
+
+    private fun toDomain(note: NoteData): NoteDomain {
+        return NoteDomain(
+            id = note.id,
+            dateStart = Timestamp(note.dateStart),
+            dateFinish = Timestamp(note.dateFinish),
+            name = note.name,
+            description = note.description
+        )
+    }
 
     private fun toData(note: NoteDomain): NoteData {
         return NoteData(

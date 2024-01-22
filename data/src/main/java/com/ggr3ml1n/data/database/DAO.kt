@@ -21,4 +21,7 @@ interface DAO {
 
     @Update
     suspend fun updateNote(note: NoteData)
+
+    @Query("SELECT * FROM notes WHERE name LIKE :name ORDER BY name, dateStart")
+    fun getNoteByName(name: String): Flow<List<NoteData>>
 }
