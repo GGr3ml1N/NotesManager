@@ -12,6 +12,7 @@ val appModule = module{
         AllNotesViewModel(
             getNotesByDateUseCase = get(),
             deleteNoteUseCase = get(),
+            getNotesByNameUseCase = get()
         )
     }
     viewModel<CurrentNoteViewModel>{
