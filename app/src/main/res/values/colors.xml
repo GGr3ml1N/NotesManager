@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="purple">#FF6750A4</color>
+    <color name="purple_variant">#7559BD</color>
+    <color name="text_black_light_theme">#FF595459</color>
+    <color name="background_light_theme">#FFFFFBFF</color>
+    <color name="background_night_theme">#FF1C1B1F</color>
+    <color name="red">#FFDD4242</color>
+    <color name="hint">#FFA9A8AA</color>
 </resources>
